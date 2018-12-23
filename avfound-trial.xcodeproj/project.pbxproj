@@ -12,6 +12,8 @@
 		3221DB3D21C3858200563DDD /* avfound_trial.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3221DB3B21C3858200563DDD /* avfound_trial.xcdatamodeld */; };
 		3221DB3F21C3858200563DDD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3221DB3E21C3858200563DDD /* Assets.xcassets */; };
 		3221DB4221C3858200563DDD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3221DB4021C3858200563DDD /* LaunchScreen.storyboard */; };
+		32AD046321C4E7EF0027C54C /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32AD046221C4E7EF0027C54C /* SnapKit.framework */; };
+		32ED873F21CF20D100B1E355 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32ED873E21CF20D100B1E355 /* PreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		3221DB3E21C3858200563DDD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3221DB4121C3858200563DDD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3221DB4321C3858200563DDD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		32AD046221C4E7EF0027C54C /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Carthage/Build/iOS/SnapKit.framework; sourceTree = "<group>"; };
+		32ED873E21CF20D100B1E355 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32AD046321C4E7EF0027C54C /* SnapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,6 +45,7 @@
 			children = (
 				3221DB3321C3858200563DDD /* avfound-trial */,
 				3221DB3221C3858200563DDD /* Products */,
+				32AD046121C4E7EF0027C54C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,12 +62,21 @@
 			children = (
 				3221DB3421C3858200563DDD /* AppDelegate.swift */,
 				3221DB3621C3858200563DDD /* ViewController.swift */,
+				32ED873E21CF20D100B1E355 /* PreviewView.swift */,
 				3221DB3E21C3858200563DDD /* Assets.xcassets */,
 				3221DB4021C3858200563DDD /* LaunchScreen.storyboard */,
 				3221DB4321C3858200563DDD /* Info.plist */,
 				3221DB3B21C3858200563DDD /* avfound_trial.xcdatamodeld */,
 			);
 			path = "avfound-trial";
+			sourceTree = "<group>";
+		};
+		32AD046121C4E7EF0027C54C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				32AD046221C4E7EF0027C54C /* SnapKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,6 +89,7 @@
 				3221DB2D21C3858200563DDD /* Sources */,
 				3221DB2E21C3858200563DDD /* Frameworks */,
 				3221DB2F21C3858200563DDD /* Resources */,
+				32AD046421C4E80D0027C54C /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -129,12 +145,35 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		32AD046421C4E80D0027C54C /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/SnapKit.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		3221DB2D21C3858200563DDD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3221DB3D21C3858200563DDD /* avfound_trial.xcdatamodeld in Sources */,
+				32ED873F21CF20D100B1E355 /* PreviewView.swift in Sources */,
 				3221DB3721C3858200563DDD /* ViewController.swift in Sources */,
 				3221DB3521C3858200563DDD /* AppDelegate.swift in Sources */,
 			);
@@ -275,7 +314,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9RU7P9KRBT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "avfound-trial/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -292,7 +337,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 9RU7P9KRBT;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "avfound-trial/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
