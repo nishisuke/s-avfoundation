@@ -74,7 +74,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         
         let movieFileOutput = AVCaptureMovieFileOutput()
         guard captureSession.canAddOutput(movieFileOutput) else { return }
-        captureSession.sessionPreset = .low
+        captureSession.sessionPreset = .medium
         captureSession.addOutput(movieFileOutput)
         self.movieFileOutput = movieFileOutput
         captureSession.commitConfiguration()
