@@ -142,7 +142,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             }
         }
         
-
+        
         if error != nil {
             print("Movie file finishing error: \(String(describing: error))")
             let success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
@@ -152,23 +152,47 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             }
         }
         
-        // Check authorization status.
-        PHPhotoLibrary.requestAuthorization { status in
-            if status != .authorized {
-                cleanup()
+        let ava = AVAsset(url: outputFileURL)
+        let avmc = AVMutableComposition(urlAssetInitializationOptions: nil)
+        let r = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: ava.duration)
+        do {
+            try avmc.insertTimeRange(r, of: ava, at: CMTimeMake(value: 0, timescale: 1))
+            avmc.scaleTimeRange(r, toDuration: CMTimeMultiplyByRatio(ava.duration, multiplier: 1, divisor: 2))
+        } catch {
+            print("hoge")
+        }
+        
+        guard let exporter = AVAssetExportSession(asset: avmc, presetName: AVAssetExportPresetHighestQuality) else {
+            fatalError()
+        }
+        let outputPath = (String(Int(Date().timeIntervalSince1970)) as NSString).appendingPathExtension("mov")
+        exporter.outputURL = URL(fileURLWithPath: (NSTemporaryDirectory() as NSString).appendingPathComponent(outputPath!))
+        
+        exporter.outputFileType = .mov
+        // exporter.videoComposition = composition
+        exporter.exportAsynchronously {
+            if exporter.status != .completed {
+                print(exporter.status.rawValue)
                 return
             }
-            PHPhotoLibrary.shared().performChanges({
-                let options = PHAssetResourceCreationOptions()
-                options.shouldMoveFile = true
-                let creationRequest = PHAssetCreationRequest.forAsset()
-                creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
-            }, completionHandler: { success, error in
-                if !success {
-                    print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
+            // Check authorization status.
+            PHPhotoLibrary.requestAuthorization { status in
+                if status != .authorized {
+                    cleanup()
+                    return
                 }
-                cleanup()
-            })
+                PHPhotoLibrary.shared().performChanges({
+                    let options = PHAssetResourceCreationOptions()
+                    options.shouldMoveFile = true
+                    let creationRequest = PHAssetCreationRequest.forAsset()
+                    creationRequest.addResource(with: .video, fileURL: exporter.outputURL!, options: options)
+                }, completionHandler: { success, error in
+                    if !success {
+                        print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
+                    }
+                    cleanup()
+                })
+            }
         }
     }
 }
