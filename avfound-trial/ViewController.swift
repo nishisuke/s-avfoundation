@@ -142,6 +142,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             }
         }
         
+
         if error != nil {
             print("Movie file finishing error: \(String(describing: error))")
             let success = (((error! as NSError).userInfo[AVErrorRecordingSuccessfullyFinishedKey] as AnyObject).boolValue)!
@@ -151,58 +152,23 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             }
         }
         
-        let asset = AVAsset(url: outputFileURL)
-        let filter = CIFilter(name: "CIGaussianBlur")!
-        let composition = AVVideoComposition(asset: asset, applyingCIFiltersWithHandler: { request in
-            // Clamp to avoid blurring transparent pixels at the image edges
-            let source = request.sourceImage.clampedToExtent()
-            filter.setValue(source, forKey: kCIInputImageKey)
-            
-            // Vary filter parameters based on video timing
-            let seconds = CMTimeGetSeconds(request.compositionTime)
-            filter.setValue(seconds * 10.0, forKey: kCIInputRadiusKey)
-            
-            // Crop the blurred output to the bounds of the original image
-            let output = filter.outputImage!.cropped(to: request.sourceImage.extent)
-            
-            // Provide the filter output to the composition
-            request.finish(with: output, context: nil)
-        })
-        
-        guard let exporter = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
-            fatalError()
-        }
-        let now = Int(Date().timeIntervalSince1970)
-        let outputFileName = String(now)
-        let outputPath = (outputFileName as NSString).appendingPathExtension("mov")
-        let path = (NSTemporaryDirectory() as NSString).appendingPathComponent(outputPath!)
-        exporter.outputURL = URL(fileURLWithPath: path)
-        
-        exporter.outputFileType = .mov
-        exporter.videoComposition = composition
-        exporter.exportAsynchronously {
-            if exporter.status != .completed {
+        // Check authorization status.
+        PHPhotoLibrary.requestAuthorization { status in
+            if status != .authorized {
+                cleanup()
                 return
             }
-            
-            // Check authorization status.
-            PHPhotoLibrary.requestAuthorization { status in
-                if status != .authorized {
-                    cleanup()
-                    return
+            PHPhotoLibrary.shared().performChanges({
+                let options = PHAssetResourceCreationOptions()
+                options.shouldMoveFile = true
+                let creationRequest = PHAssetCreationRequest.forAsset()
+                creationRequest.addResource(with: .video, fileURL: outputFileURL, options: options)
+            }, completionHandler: { success, error in
+                if !success {
+                    print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
                 }
-                PHPhotoLibrary.shared().performChanges({
-                    let options = PHAssetResourceCreationOptions()
-                    options.shouldMoveFile = true
-                    let creationRequest = PHAssetCreationRequest.forAsset()
-                    creationRequest.addResource(with: .video, fileURL: exporter.outputURL!, options: options)
-                }, completionHandler: { success, error in
-                    if !success {
-                        print("AVCam couldn't save the movie to your photo library: \(String(describing: error))")
-                    }
-                    cleanup()
-                })
-            }
+                cleanup()
+            })
         }
     }
 }
