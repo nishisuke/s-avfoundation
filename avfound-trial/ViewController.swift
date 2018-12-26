@@ -195,6 +195,19 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
                 print(exporter.status.rawValue)
                 return
             }
+            
+            // 再生
+            let player = AVPlayer(url: exporter.outputURL!)
+            
+            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: player.currentItem, queue: .main) { [weak self] _ in
+                player.seek(to: CMTime.zero)
+                player.play()
+            }
+            let playerLayer = AVPlayerLayer(player: player)
+            playerLayer.frame = self.view.bounds
+            self.view.layer.addSublayer(playerLayer)
+            player.play()
+            
             // Check authorization status.
             PHPhotoLibrary.requestAuthorization { status in
                 if status != .authorized {
