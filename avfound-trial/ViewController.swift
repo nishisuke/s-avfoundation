@@ -169,6 +169,7 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
         exporter.outputURL = URL(fileURLWithPath: (NSTemporaryDirectory() as NSString).appendingPathComponent(outputPath!))
         
         let filter = CIFilter(name: "CIGaussianBlur")!
+        let ivf = CIFilter(name: "CIColorInvert")!
         let composition = AVVideoComposition(asset: avmc, applyingCIFiltersWithHandler: { request in
             // Clamp to avoid blurring transparent pixels at the image edges
             let source = request.sourceImage.clampedToExtent()
@@ -180,9 +181,11 @@ class ViewController: UIViewController, AVCaptureFileOutputRecordingDelegate {
             
             // Crop the blurred output to the bounds of the original image
             let output = filter.outputImage!.cropped(to: request.sourceImage.extent)
+            ivf.setValue(output, forKey: kCIInputImageKey)
+            let hoge = ivf.outputImage!.cropped(to: request.sourceImage.extent)
             
             // Provide the filter output to the composition
-            request.finish(with: output, context: nil)
+            request.finish(with: hoge, context: nil)
         })
         exporter.videoComposition = composition
         exporter.outputFileType = .mov
